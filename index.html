@@ -93,6 +93,29 @@ header.top{
 .spia-ko{background:#8a1420;color:#ffd9d9;font-weight:700;}
 
 /* ---------- Tabs ---------- */
+/* ---------- Menu laterale a scomparsa ---------- */
+.menu-btn{flex:0 0 auto;font-size:19px;}
+header.top{gap:10px;}
+.drawer-fondo{position:fixed;inset:0;background:rgba(5,10,25,.6);z-index:90;display:none;}
+.drawer-fondo.show{display:block;}
+.drawer{
+  position:fixed;top:0;left:0;bottom:0;width:270px;max-width:84vw;z-index:95;
+  background:var(--pitch-800);border-right:1px solid var(--card-edge);
+  padding:14px 12px;overflow-y:auto;transform:translateX(-102%);
+  transition:transform .22s ease;display:flex;flex-direction:column;
+}
+.drawer.show{transform:translateX(0);}
+.drawer-testa{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:12px;}
+.drawer-profilo{font-family:'Oswald',sans-serif;font-size:16px;text-transform:uppercase;color:#fff;line-height:1.1;}
+.drawer-lega{font-size:11px;color:var(--ink-soft);margin-top:2px;}
+.drawer nav.tabs{flex-direction:column;gap:3px;overflow:visible;margin-bottom:12px;}
+.drawer nav.tabs button{width:100%;text-align:left;border-radius:8px;padding:11px 12px;font-size:13px;}
+.drawer .modeswitch{margin-bottom:12px;}
+.drawer-piede{margin-top:auto;padding-top:12px;border-top:1px solid var(--card-edge);}
+.sezione-corrente{
+  font-family:'Oswald',sans-serif;font-size:12px;letter-spacing:1.2px;text-transform:uppercase;
+  color:var(--gold);margin:-4px 0 12px;padding-bottom:6px;border-bottom:1px solid var(--card-edge);
+}
 .barra-profilo{display:flex;gap:6px;align-items:center;margin-bottom:8px;}
 .barra-profilo select{
   flex:1;min-width:0;padding:8px 10px;border-radius:999px;border:1px solid var(--card-edge);
@@ -365,6 +388,15 @@ table.rilanci tr.top-rival td{background:rgba(168,65,47,.08);}
 #listoneSquadraFilter{padding:9px 14px;border-radius:999px;border:none;font-size:13px;background:#fff;color:#1a2440;min-width:140px;}
 .check-inline{color:#dfe8e2;font-size:12.5px;display:flex;align-items:center;gap:5px;}
 table.listone-tbl{width:100%;border-collapse:collapse;background:var(--card);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);}
+@media(max-width:760px){
+  table.listone-tbl th.col-opt, table.listone-tbl td.col-opt{display:none;}
+  table.listone-tbl{min-width:0 !important;}
+  .listone-scroll{overflow-x:visible !important;}
+  .ind-wrap{min-width:38px;}
+  .ind-seg{width:5px;}
+  .num-wrap{min-width:34px;}
+  .riga-scheda{gap:5px;}
+}
 table.listone-tbl th{
   text-align:left;font-size:10.5px;text-transform:uppercase;color:var(--ink-soft);padding:8px 8px;
   border-bottom:2px solid var(--line);letter-spacing:.3px;position:sticky;top:0;background:var(--card);
@@ -599,6 +631,7 @@ table.alt tr.alt-pari td{background:rgba(63,145,66,.10);}
 <body>
 <div class="wrap">
   <header class="top">
+    <button class="iconbtn menu-btn" id="btnMenu" title="Sezioni" aria-label="Apri il menu delle sezioni">☰</button>
     <div class="brand">
       <h1>Asta <span class="hl">Fantacalcio</span></h1>
       <span class="sub" id="seasonLabel">26/27</span>
@@ -606,20 +639,26 @@ table.alt tr.alt-pari td{background:rgba(63,145,66,.10);}
     <div class="headerbtns">
       <span class="spia" id="spiaSalvataggio" title="stato del salvataggio"></span>
       <button class="iconbtn" id="btnSettings" title="Impostazioni">⚙</button>
-      <button class="iconbtn" id="btnReset" title="Azzera asta">↺</button>
     </div>
   </header>
 
-  <div class="barra-profilo">
-    <select id="selProfilo" title="Chi sei"></select>
-    <select id="selLega" title="Quale lega"></select>
-    <button class="iconbtn" id="btnGestioneProfili" title="Gestisci profili e leghe" style="width:34px;height:34px;font-size:14px;">👤</button>
-  </div>
+  <div class="sezione-corrente" id="sezioneCorrente"></div>
 
-  <div class="modeswitch" id="modeSwitch">
-    <button data-modo="asta">🎟️ Asta</button>
-    <button data-modo="stagione">📅 Stagione</button>
-  </div>
+  <!-- menu laterale a scomparsa -->
+  <div class="drawer-fondo" id="drawerFondo"></div>
+  <aside class="drawer" id="drawer">
+    <div class="drawer-testa">
+      <div>
+        <div class="drawer-profilo" id="drawerProfilo"></div>
+        <div class="drawer-lega" id="drawerLega"></div>
+      </div>
+      <button class="iconbtn" id="btnChiudiDrawer" title="Chiudi">✕</button>
+    </div>
+
+    <div class="modeswitch" id="modeSwitch">
+      <button data-modo="asta">🎟️ Asta</button>
+      <button data-modo="stagione">📅 Stagione</button>
+    </div>
 
   <nav class="tabs">
     <button class="active" data-view="chiamata" data-modi="asta">Chiamata</button>
@@ -632,6 +671,11 @@ table.alt tr.alt-pari td{background:rgba(63,145,66,.10);}
     <button data-view="squadre" data-modi="asta stagione">Squadre</button>
     <button data-view="statistiche" data-modi="asta stagione">Statistiche</button>
   </nav>
+
+    <div class="drawer-piede">
+      <button class="btn btn-ghost" id="btnReset" style="width:100%;color:var(--ink);border-color:var(--line);">↺ Azzera asta</button>
+    </div>
+  </aside>
 
   <!-- ===== VIEW: CHIAMATA ===== -->
   <section class="view active" id="view-chiamata">
@@ -728,7 +772,15 @@ table.alt tr.alt-pari td{background:rgba(63,145,66,.10);}
 
 <div class="overlay" id="settingsOverlay">
   <div class="modal">
-    <h2>Impostazioni asta</h2>
+    <h2>Impostazioni</h2>
+    <div class="field">
+      <label>Chi gioca e in quale lega</label>
+      <div style="display:flex;gap:6px;">
+        <select id="selProfilo" title="Chi sei" style="flex:1;min-width:0;padding:9px 10px;border-radius:7px;border:1px solid var(--line);background:#fff;color:#1a2440;font-size:14px;"></select>
+        <select id="selLega" title="Quale lega" style="flex:1;min-width:0;padding:9px 10px;border-radius:7px;border:1px solid var(--line);background:#fff;color:#1a2440;font-size:14px;"></select>
+      </div>
+      <button class="small-link" id="btnGestioneProfili">gestisci profili e leghe…</button>
+    </div>
     <div class="field">
       <label>Aspetto</label>
       <div class="theme-swatches">
@@ -1082,8 +1134,9 @@ async function ricaricaTutto(){
   formazioneManagerSel = null; strategiaManager = null;
   scambiManagerA = null; scambiManagerB = null;
   scambiSelA = new Set(); scambiSelB = new Set();
-  renderBarraProfilo(); renderHeader();
+  renderBarraProfilo(); renderHeader(); aggiornaTestaDrawer();
   applicaModo(modoSuggerito(), true);
+  aggiornaTestaDrawer();
   renderScheda(); renderTeams(); renderAndamento(); renderListone();
 }
 
@@ -2069,11 +2122,11 @@ function renderAndamento(){
 const LISTONE_COLS = [
   {key:'ruolo',    label:'R',        type:'text', get:p=>p.ruolo || ''},
   {key:'nome',     label:'Nome',     type:'text', get:p=>p.nome || ''},
-  {key:'squadra',  label:'Squadra',  type:'text', get:p=>p.squadra || ''},
+  {key:'squadra',  label:'Squadra',  type:'text', get:p=>p.squadra || '', opt:true},
   {key:'fascia',   label:'Fascia',   type:'text', get:p=>p.fascia || ''},
-  {key:'qtA',      label:'Qt.A',     type:'num',  get:p=>p.qtA ?? -1},
-  {key:'fvm',      label:'FVM',      type:'num',  get:p=>p.fvm ?? -1},
-  {key:'prezzoPct',label:'Prezzo %', type:'num',  get:p=>p.prezzoPct ?? -1},
+  {key:'qtA',      label:'Qt.A',     type:'num',  get:p=>p.qtA ?? -1, opt:true},
+  {key:'fvm',      label:'FVM',      type:'num',  get:p=>p.fvm ?? -1, opt:true},
+  {key:'prezzoPct',label:'Prezzo %', type:'num',  get:p=>p.prezzoPct ?? -1, opt:true},
   {key:'prezzo',   label:'Prezzo',   type:'num',  get:p=>prezzoConsigliato(p) ?? -1},
 ];
 let listoneSortKey = 'prezzo';
@@ -2112,7 +2165,7 @@ function renderListone(){
 
   const theadHtml = `<tr>${LISTONE_COLS.map(c=>{
     const arrow = listoneSortKey===c.key ? (listoneSortDir==='asc' ? ' ▲' : ' ▼') : '';
-    return `<th data-key="${c.key}" style="cursor:pointer;user-select:none;">${c.label}${arrow}</th>`;
+    return `<th data-key="${c.key}" class="${c.opt?'col-opt':''}" style="cursor:pointer;user-select:none;">${c.label}${arrow}</th>`;
   }).join('')}<th style="text-align:center;">Caratteristiche</th></tr>`;
 
   const body = rows.map(p=>{
@@ -2123,12 +2176,12 @@ function renderListone(){
     const pc = tRow.stato==='ok' ? Object.fromEntries(tRow.righe.map(r=>[r.key, r.pct])) : {};
     return `<tr class="${taken?'taken-row':''}" data-id="${p.id}">
       <td><span class="sugg-role role-${p.ruolo}" style="width:20px;height:20px;font-size:10px;">${p.ruolo}</span></td>
-      <td style="font-weight:600;">${p.nome}${taken?` <span style="font-size:10px;">(${taken.manager})</span>`:''}</td>
-      <td>${p.squadra}</td>
+      <td style="font-weight:600;">${p.nome}${taken?` <span style="font-size:10px;">(${taken.manager})</span>`:''}<div class="solo-stretto" style="font-size:10px;color:var(--ink-soft);font-weight:400;">${p.squadra||''}</div></td>
+      <td class="col-opt">${p.squadra}</td>
       <td><span class="fascia-pill ${fasciaClass(p.fascia)}">${normFascia(p.fascia)}</span></td>
-      <td>${p.qtA}</td>
-      <td>${p.fvm}</td>
-      <td><input type="number" class="pct-input" data-id="${p.id}" value="${pctVal}" placeholder="—" step="0.1" min="0" max="100" ${soloProprietario()?'':'disabled title="modificabile solo dal profilo proprietario"'}></td>
+      <td class="col-opt">${p.qtA}</td>
+      <td class="col-opt">${p.fvm}</td>
+      <td class="col-opt"><input type="number" class="pct-input" data-id="${p.id}" value="${pctVal}" placeholder="—" step="0.1" min="0" max="100" ${soloProprietario()?'':'disabled title="modificabile solo dal profilo proprietario"'}></td>
       <td style="font-family:'JetBrains Mono',monospace;font-weight:700;">${prezzoCr ?? '—'}</td>
       <td class="ind-cell"><span class="riga-scheda">
         ${indicatore('Integr.', pc.integrita)}
@@ -3653,13 +3706,13 @@ function renderStatistiche(){
       <td class="ind-cell">${indicatore('Integr.', pc.integrita)}</td>
       <td class="ind-cell">${indicatore('Affid.', pc.affidabilita)}</td>
       <td class="ind-cell">${indicatore('Pericol.', pc.pericolosita)}</td>
-      <td class="ind-cell">${indicatore('Precis.', pc.precisione)}</td>
-      <td class="ind-cell">${indicatore('Disc.', pc.disciplina)}</td>
+      <td class="ind-cell col-opt">${indicatore('Precis.', pc.precisione)}</td>
+      <td class="ind-cell col-opt">${indicatore('Disc.', pc.disciplina)}</td>
       <td class="ind-cell">${valoreNumerico('FM att.', fv, 2)}</td>
-      <td class="ind-cell">${valoreNumerico('MV', s.mv, 2)}</td>
-      <td class="ind-cell">${valoreNumerico('Pres.', s.pv)}</td>
-      <td class="ind-cell">${valoreNumerico('Min%', s.fb_quota_minuti, 0)}</td>
-      <td class="ind-cell">${valoreNumerico('xG+xA', attesa, 2)}</td>
+      <td class="ind-cell col-opt">${valoreNumerico('MV', s.mv, 2)}</td>
+      <td class="ind-cell col-opt">${valoreNumerico('Pres.', s.pv)}</td>
+      <td class="ind-cell col-opt">${valoreNumerico('Min%', s.fb_quota_minuti, 0)}</td>
+      <td class="ind-cell col-opt">${valoreNumerico('xG+xA', attesa, 2)}</td>
     </tr>`;
   }).join('');
 
@@ -3677,8 +3730,10 @@ function renderStatistiche(){
     <div class="listone-scroll" style="overflow-x:auto;"><table class="listone-tbl" style="min-width:820px;">
       <thead><tr>
         <th>R</th><th>Nome</th><th style="text-align:center;">Tier</th>
-        <th colspan="5" style="text-align:center;">Caratteristiche (confronto nel ruolo)</th>
-        <th colspan="5" style="text-align:center;">Valori</th>
+        <th colspan="3" style="text-align:center;">Caratteristiche</th>
+        <th colspan="2" class="col-opt" style="text-align:center;">Altre</th>
+        <th style="text-align:center;">FM att.</th>
+        <th colspan="4" class="col-opt" style="text-align:center;">Valori</th>
       </tr></thead>
       <tbody>${righe || '<tr><td colspan="13" style="color:#8b98b8;">Nessun giocatore trovato.</td></tr>'}</tbody>
     </table></div>
@@ -4136,6 +4191,7 @@ function apriVista(nome){
   if(nome==='statistiche') renderStatistiche();
   if(nome==='strategia') renderStrategia();
   if(nome==='calendario') renderCalendario();
+  aggiornaSezioneCorrente();
 }
 
 function applicaModo(modo, apriPrima){
@@ -4155,7 +4211,7 @@ function applicaModo(modo, apriPrima){
 }
 
 document.querySelectorAll('nav.tabs button').forEach(btn=>{
-  btn.addEventListener('click', ()=> apriVista(btn.dataset.view));
+  btn.addEventListener('click', ()=>{ apriVista(btn.dataset.view); chiudiDrawer(); });
 });
 document.querySelectorAll('#modeSwitch button').forEach(btn=>{
   btn.addEventListener('click', async ()=>{
@@ -4312,6 +4368,31 @@ document.getElementById('profiliOverlay').addEventListener('click', e=>{
   if(e.target.id==='profiliOverlay') e.target.classList.remove('show');
 });
 
+// ============ MENU LATERALE ============
+function apriDrawer(){
+  document.getElementById('drawer').classList.add('show');
+  document.getElementById('drawerFondo').classList.add('show');
+  aggiornaTestaDrawer();
+}
+function chiudiDrawer(){
+  document.getElementById('drawer').classList.remove('show');
+  document.getElementById('drawerFondo').classList.remove('show');
+}
+function aggiornaTestaDrawer(){
+  const p = document.getElementById('drawerProfilo');
+  const l = document.getElementById('drawerLega');
+  if(p) p.textContent = profiloAttivo ? profiloAttivo.nome : '';
+  if(l) l.textContent = legaAttiva ? legaAttiva.nome : '';
+}
+function aggiornaSezioneCorrente(){
+  const el = document.getElementById('sezioneCorrente');
+  const attivo = document.querySelector('nav.tabs button.active');
+  if(el && attivo) el.textContent = attivo.textContent;
+}
+document.getElementById('btnMenu').addEventListener('click', apriDrawer);
+document.getElementById('btnChiudiDrawer').addEventListener('click', chiudiDrawer);
+document.getElementById('drawerFondo').addEventListener('click', chiudiDrawer);
+
 // ============ INIT ============
 async function init(){
   REGISTRO = await caricaProfili();
@@ -4329,6 +4410,7 @@ async function init(){
   renderHeader();
   aggiornaSpiaSalvataggio();
   applicaModo(modoSuggerito(), true);
+  aggiornaTestaDrawer();
   renderScheda();
   renderTeams();
   renderAndamento();
