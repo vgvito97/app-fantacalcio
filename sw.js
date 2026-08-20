@@ -5,7 +5,7 @@
 // IMPORTANTE: quando carichi una versione nuova dell'app su GitHub, cambia il
 // numero qui sotto (da v1 a v2, ecc.). Serve a dire al telefono di buttare via
 // la copia vecchia: senza questo, continuerebbe a mostrare la versione salvata.
-const VERSIONE = 'fanta-v3';
+const VERSIONE = 'fanta-v4';
 
 const FILE = [
   './',
